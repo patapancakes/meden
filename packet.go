@@ -17,7 +17,10 @@
 
 package main
 
-import "net"
+import (
+	"fmt"
+	"net"
+)
 
 type Opcode uint8
 
@@ -100,4 +103,136 @@ type ConnectBSSIDPacketS2C struct {
 type ChatPacketS2C struct {
 	message ChatMessage
 	name    Nickname
+}
+
+// Decoders
+
+func decodeLogin(data []byte) (LoginPacketC2S, error) {
+	var login LoginPacketC2S
+
+	if len(data) < MACAddressLength+NicknameLength+ProductCodeLength {
+		return LoginPacketC2S{}, fmt.Errorf("invalid packet size: expected at least %d, got %d", MACAddressLength+NicknameLength+ProductCodeLength, len(data))
+	}
+
+	for i := range login.mac {
+		login.mac[i] = data[i]
+	}
+
+	for i := range login.name {
+		if data[MACAddressLength+i] == 0 {
+			break
+		}
+
+		login.name[i] = data[MACAddressLength+1]
+	}
+
+	for i := range login.game {
+		if data[MACAddressLength+NicknameLength+i] == 0 {
+			break
+		}
+
+		login.game[i] = data[MACAddressLength+NicknameLength+i]
+	}
+
+	return login, nil
+}
+
+func decodeConnect(data []byte) (ConnectPacketC2S, error) {
+	var connect ConnectPacketC2S
+
+	if len(data) < GroupNameLength {
+		return ConnectPacketC2S{}, fmt.Errorf("invalid packet size: expected at least %d, got %d", GroupNameLength, len(data))
+	}
+
+	for i := range connect.group {
+		if data[i] == 0 {
+			break
+		}
+
+		connect.group[i] = data[i]
+	}
+
+	return connect, nil
+}
+
+func decodeChat(data []byte) (ChatPacketC2S, error) {
+	var chat ChatPacketC2S
+
+	if len(data) < ChatMessageLength {
+		return ChatPacketC2S{}, fmt.Errorf("invalid packet size: expected at least %d, got %d", ChatMessageLength, len(data))
+	}
+
+	for i := range chat.message {
+		if data[i] == 0 {
+			break
+		}
+
+		chat.message[i] = data[i]
+	}
+
+	return chat, nil
+}
+
+// Encoders
+
+func encodeConnect(data ConnectPacketS2C) []byte {
+	nameTruncated := cstrTruncate(data.name[:])
+
+	connect := make([]byte, 0, 1+len(nameTruncated)+MACAddressLength+4)
+
+	connect = append(connect, uint8(Connect))
+	connect = append(connect, nameTruncated...)
+	connect = append(connect, data.mac[:]...)
+	connect = append(connect, data.ip.To4()...)
+
+	return connect
+}
+
+func encodeDisconnect(data DisconnectPacketS2C) []byte {
+	disconnect := make([]byte, 0, 1+4)
+
+	disconnect = append(disconnect, uint8(Disconnect))
+	disconnect = append(disconnect, data.ip.To4()...)
+
+	return disconnect
+}
+
+func encodeScan(data ScanPacketS2C) []byte {
+	scan := make([]byte, 0, 1+GroupNameLength+MACAddressLength)
+
+	scan = append(scan, uint8(Scan))
+	scan = append(scan, data.group[:]...)
+	scan = append(scan, data.mac[:]...)
+
+	return scan
+}
+
+func encodeScanComplete() []byte {
+	scanComplete := make([]byte, 0, 1)
+
+	scanComplete = append(scanComplete, uint8(ScanComplete))
+
+	return scanComplete
+}
+
+func encodeConnectBSSID(data ConnectBSSIDPacketS2C) []byte {
+	connectBSSID := make([]byte, 0, 1+MACAddressLength)
+
+	connectBSSID = append(connectBSSID, uint8(ConnectBSSID))
+	connectBSSID = append(connectBSSID, data.mac[:]...)
+
+	return connectBSSID
+}
+
+func encodeChat(data ChatPacketS2C) []byte {
+	messageTruncated := cstrTruncate(data.message[:])
+	nameTruncated := cstrTruncate(data.name[:])
+
+	chat := make([]byte, 0, 1+len(messageTruncated)+len(nameTruncated))
+
+	chat = append(chat, uint8(Chat))
+	chat = append(chat, messageTruncated...)
+	chat = append(chat, nameTruncated...)
+
+	return chat
 }
