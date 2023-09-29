@@ -19,14 +19,13 @@ package main
 
 import (
 	"context"
-	"encoding/binary"
 	"log"
 	"net"
 )
 
 var (
 	games   = NewGameList()
-	clients = NewClientList()
+	//clients = NewClientList()
 )
 
 func main() {
@@ -45,12 +44,6 @@ func main() {
 			continue
 		}
 
-		if client := clients.get(addrToUint32(conn.RemoteAddr())); client != nil {
-			log.Printf("[WRN] closing existing connection from %s.", conn.RemoteAddr())
-
-			client.cancel()
-		}
-
 		client := &Client{
 			conn:   conn,
 			outbox: make(chan []byte, 16),
@@ -58,7 +51,7 @@ func main() {
 
 		client.ctx, client.cancel = context.WithCancel(context.Background())
 
-		clients.set(addrToUint32(conn.RemoteAddr()), client)
+		//clients.set(addrToUint32(conn.RemoteAddr()), client)
 
 		go client.messageWriter()
 		go client.listen()
@@ -67,9 +60,9 @@ func main() {
 	}
 }
 
-func addrToUint32(addr net.Addr) uint32 {
+/*func addrToUint32(addr net.Addr) uint32 {
 	return binary.LittleEndian.Uint32(addrToIP(addr))
-}
+}*/
 
 func addrToIP(addr net.Addr) net.IP {
 	host, _, _ := net.SplitHostPort(addr.String())

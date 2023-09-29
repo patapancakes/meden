@@ -21,7 +21,6 @@ import (
 	"context"
 	"log"
 	"net"
-	"sync"
 	"time"
 )
 
@@ -39,7 +38,7 @@ type Client struct {
 	group *Group
 }
 
-type ClientList struct {
+/*type ClientList struct {
 	data map[uint32]*Client
 	mtx  sync.RWMutex
 }
@@ -58,13 +57,13 @@ func (cl *ClientList) get(key uint32) *Client {
 	return cl.data[key]
 }
 
-/*func (cl *ClientList) getAll() map[uint32]*Client {
+func (cl *ClientList) getAll() map[uint32]*Client {
 	cl.mtx.RLock()
 
 	defer cl.mtx.RUnlock()
 
 	return cl.data
-}*/
+}
 
 func (cl *ClientList) set(key uint32, value *Client) {
 	cl.mtx.Lock()

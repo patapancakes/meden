@@ -147,7 +147,7 @@ func (c *Client) handleDisconnect() error {
 		client.outbox <- payload
 	}
 
-	clients.del(addrToUint32(c.conn.RemoteAddr()))
+	//clients.del(addrToUint32(c.conn.RemoteAddr()))
 
 	for i, client := range c.group.clients {
 		if client == c {
