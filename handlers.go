@@ -50,9 +50,7 @@ func (c *Client) handleLogin(login LoginPacketC2S) error {
 
 	game := games.get(baseProductCode)
 	if game == nil {
-		game = &Game{
-			groups: NewGroupList(),
-		}
+		game = &Game{groups: NewGroupList()}
 
 		games.set(baseProductCode, game)
 	}

@@ -29,9 +29,7 @@ type GroupList struct {
 }
 
 func NewGroupList() *GroupList {
-	return &GroupList{
-		data: make(map[GroupName]*Group),
-	}
+	return &GroupList{data: make(map[GroupName]*Group)}
 }
 
 func (gl *GroupList) get(key GroupName) *Group {

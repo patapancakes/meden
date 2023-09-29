@@ -29,9 +29,7 @@ type GameList struct {
 }
 
 func NewGameList() *GameList {
-	return &GameList{
-		data: make(map[ProductCode]*Game),
-	}
+	return &GameList{data: make(map[ProductCode]*Game)}
 }
 
 func (gl *GameList) get(key ProductCode) *Game {
