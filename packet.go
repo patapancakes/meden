@@ -123,7 +123,7 @@ func decodeLogin(data []byte) (LoginPacketC2S, error) {
 			break
 		}
 
-		login.name[i] = data[MACAddressLength+1]
+		login.name[i] = data[MACAddressLength+i]
 	}
 
 	for i := range login.game {
