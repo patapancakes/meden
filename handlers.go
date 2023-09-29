@@ -159,25 +159,33 @@ func (c *Client) handleDisconnect() error {
 		}
 	}
 
+	c.game.groups.mtx.Lock()
+
 	if len(c.group.clients) == 0 {
-		for groupName, group := range c.game.groups.getAll() {
+		for groupName, group := range c.game.groups.data {
 			if group == c.group {
-				c.game.groups.del(groupName)
+				delete(c.game.groups.data, groupName)
 
 				break
 			}
 		}
 	}
 
-	if c.game.groups.len() == 0 {
-		for productCode, game := range games.getAll() {
+	c.game.groups.mtx.Unlock()
+
+	games.mtx.Lock()
+
+	if len(c.game.groups.data) == 0 {
+		for productCode, game := range games.data {
 			if game == c.game {
-				games.del(productCode)
+				delete(games.data, productCode)
 
 				break
 			}
 		}
 	}
+
+	games.mtx.Unlock()
 
 	log.Printf("[INF] %s (MAC: %X) disconnected.", cstrToString(c.name[:]), c.mac)
 

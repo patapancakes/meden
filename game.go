@@ -42,13 +42,13 @@ func (gl *GameList) get(key ProductCode) *Game {
 	return gl.data[key]
 }
 
-func (gl *GameList) getAll() map[ProductCode]*Game {
+/*func (gl *GameList) getAll() map[ProductCode]*Game {
 	gl.mtx.RLock()
 
 	defer gl.mtx.RUnlock()
 
 	return gl.data
-}
+}*/
 
 func (gl *GameList) set(key ProductCode, value *Game) {
 	gl.mtx.Lock()
@@ -58,7 +58,7 @@ func (gl *GameList) set(key ProductCode, value *Game) {
 	gl.mtx.Unlock()
 }
 
-func (gl *GameList) del(key ProductCode) {
+/*func (gl *GameList) del(key ProductCode) {
 	gl.mtx.Lock()
 
 	delete(gl.data, key)
@@ -66,7 +66,7 @@ func (gl *GameList) del(key ProductCode) {
 	gl.mtx.Unlock()
 }
 
-/*func (gl *GameList) len() int {
+func (gl *GameList) len() int {
 	gl.mtx.RLock()
 
 	defer gl.mtx.RUnlock()

@@ -58,7 +58,7 @@ func (gl *GroupList) set(key GroupName, value *Group) {
 	gl.mtx.Unlock()
 }
 
-func (gl *GroupList) del(key GroupName) {
+/*func (gl *GroupList) del(key GroupName) {
 	gl.mtx.Lock()
 
 	delete(gl.data, key)
@@ -72,4 +72,4 @@ func (gl *GroupList) len() int {
 	defer gl.mtx.RUnlock()
 
 	return len(gl.data)
-}
+}*/
