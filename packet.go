@@ -176,12 +176,10 @@ func decodeChat(data []byte) (ChatPacketC2S, error) {
 // Encoders
 
 func encodeConnect(data ConnectPacketS2C) []byte {
-	nameTruncated := cstrTruncate(data.name[:])
-
-	connect := make([]byte, 0, 1+len(nameTruncated)+MACAddressLength+4)
+	connect := make([]byte, 0, 1+NicknameLength+MACAddressLength+4)
 
 	connect = append(connect, uint8(Connect))
-	connect = append(connect, nameTruncated...)
+	connect = append(connect, data.name[:]...)
 	connect = append(connect, data.mac[:]...)
 	connect = append(connect, data.ip.To4()...)
 
@@ -225,14 +223,11 @@ func encodeConnectBSSID(data ConnectBSSIDPacketS2C) []byte {
 }
 
 func encodeChat(data ChatPacketS2C) []byte {
-	messageTruncated := cstrTruncate(data.message[:])
-	nameTruncated := cstrTruncate(data.name[:])
-
-	chat := make([]byte, 0, 1+len(messageTruncated)+len(nameTruncated))
+	chat := make([]byte, 0, 1+ChatMessageLength+NicknameLength)
 
 	chat = append(chat, uint8(Chat))
-	chat = append(chat, messageTruncated...)
-	chat = append(chat, nameTruncated...)
+	chat = append(chat, data.message[:]...)
+	chat = append(chat, data.name[:]...)
 
 	return chat
 }

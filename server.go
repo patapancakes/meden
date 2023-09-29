@@ -83,19 +83,3 @@ func cstrToString(data []byte) string {
 
 	return output
 }
-
-func cstrTruncate(data []byte) []byte {
-	var output []byte
-
-	for _, char := range data {
-		if char == 0 {
-			output = append(output, char)
-
-			break
-		}
-
-		output = append(output, char)
-	}
-
-	return output
-}
