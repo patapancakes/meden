@@ -111,9 +111,9 @@ func (c *Client) handleConnect(connect ConnectPacketC2S) error {
 		})
 	}
 
-	c.group.clients = append(c.group.clients, c)
-
 	c.group = group
+	
+	c.group.clients = append(c.group.clients, c)
 
 	c.outbox <- encodeConnectBSSID(ConnectBSSIDPacketS2C{
 		mac: bssid,
