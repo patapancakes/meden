@@ -30,6 +30,10 @@ func (c *Client) handleLogin(login LoginPacketC2S) error {
 		return fmt.Errorf("client already logged in")
 	}
 
+	if login.mac == [6]uint8{0x00, 0x00, 0x00, 0x00, 0x00, 0x00} || login.mac == [6]uint8{0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF} {
+		return fmt.Errorf("invalid mac address: %X", login.mac)
+	}
+
 	var baseProductCode ProductCode
 	if link, ok := productLinks[cstrToString(login.game[:])]; ok {
 		for i := range baseProductCode {
