@@ -358,6 +358,7 @@ var (
 		"ULUS10438": "Pangya! - Fantasy Golf",
 		"UCUS98732": "Patapon 2",
 		"UCUS98751": "Patapon 3",
+		"UCES01422": "Patapon 3 Overhaul", // mod
 		"ULUS10410": "Phantasy Star Portable",
 		"ULUS10529": "Phantasy Star Portable 2",
 		// looks like this japan version can crosslink to ULUS10529
